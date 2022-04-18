@@ -1,1 +1,3 @@
-asdfasdf
+fkffkfkffkfk
+
+docker ps 
