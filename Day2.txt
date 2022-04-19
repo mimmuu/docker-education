@@ -41,7 +41,7 @@ docker container(프로세스) ps -a
 
 -docker  container   run    -it  --name  mycon3  centos    /bin/date
 -docker  container   run    -it  --name  myping   centos   /bin/ping   localhost
-=>실제 명령어 수행(PID 1)이 끝나면 컨테이너 종료함.
+=>실제 명령어 수행(PID 1)이 끝나면 컨테이너 종료함. PID 1이 종료되어야만 컨테이너가 종료되는 것. 다른 PID랑은 상관없음.
 
 
 -docker  container   run   --name  myping2   centos   /bin/ping   localhost
@@ -50,4 +50,66 @@ docker container(프로세스) ps -a
 
 -docker   container   logs   myping3
 =>해당 컨테이너의 PID 1번의 메시지를 보여주는 옵션이 logs
+
+-docker container run -it --name mycon4 --workdir=/dockertest -e Myname=xadmkmw centos
+-docker container ps -aq =>현재 container ID에 대해 전부 뿌려줌.
+
+##echo $?
+cal (정상실행) -> $? -> 0 ==> 이전의 명령어가 정상 실행됨.
+cp (syntax error) -> $? -> 1 ==> 이전의 명령어가 정상 실행되지 않음. 1~225번은 error
+
+
+##restart 옵션
+docker container run -d --restart=on-failure:2 --name mysrv1 centos /bin/ping localhost
+=>2번 실패까진 restart 수행, 3번이면 그냥 stop
+
+docker container top 컨테이너이름 
+=>위 명령어로 PID확인 후 2번 죽이면 up, 3번째부터 exited로 빠짐.
+
+##takytaky
+docker   container   run  -d  -it   --name   mysrv2   takytaky/aimage
+=>takytaky라는 개인 유저가 만든 aimage
+
+-docker  container   run  -d  -it  --name  mysrv3  --cpus=0.5    takytaky/aimage 
+-docker   container   exec  -d  -it   mysrv3   /test/a.out
+=>cpus옵션을 통해 자원할당 부분을 컨트롤 할 수 있음.
+
+##docker container stats
+CONTAINER ID   NAME      CPU %     MEM USAGE / LIMIT   MEM %     NET I/O       BLOCK I/O   PIDS
+f3cb57fe92eb   mysrv3    49.14%    708KiB / 3.852GiB   0.02%     3.21kB / 0B   0B / 0B     2
+
+##attach 명령어
+docker container attach mysrv4
+=>빠져나온 컨테이너에 attach 가능
+
+##inspect 명령어
+root@docker1:~# docker container inspect web2 |grep -i IPADDR
+            "SecondaryIPAddresses": null,
+            "IPAddress": "172.17.0.4",
+                    "IPAddress": "172.17.0.4",
+
+
+-docker  container   cp    web2:/usr/local/apache2/htdocs/index.html    /tmp
+-ls /tmp
+-conrm 
+-docker  container   run  -it   --name   pingtest   centos  /bin/ping  localhost
+
+모니터링 터미널:  Ctrl  +  c
+-docker   container   pause  pingtest
+-pingtest  터미널: Ctrl  +  c
+- docker  container    top  pingtest
+-  kill  -9    pid번호  
+-모니터링 터미널:  docker  container   unpause  pingtest
+
+
+##docker container diff
+diff를 통해 처음 만들어지는 컨테이너 내용과 다른 부분을 확인할 수 있음.
+
+##volume
+docker   container   run   -it  -v  /tmp/writedir/:/con_dir   -v  /tmp/readonly/:/read_dir:ro   --name  vol1  centos
+=>docker container run -it -v 호스트디렉터리:컨테이너 디렉터리:{rw생략..rw가 default설정} 
+
+
+
+
 
