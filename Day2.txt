@@ -1,0 +1,53 @@
+##2일차##
+
+**도커가 컨테이너를 실행할 때 overlay시스템을 사용.
+
+Docker1(아래 내용의 결과값)
+=====================
+mergeDirectory
+
+D    1(RW)        ->upper-Layer
+docker(Read-Only) ->Lower-Layer
+======================
+=>upper를 통해 lower를 수정하는 것을 CoW(copy-on-write)라고 한다.
+=>실제 lower는 수정되는것이 아님. upper는 수정 가능하고 
+
+
+**실습수행
+mkdir container image1 image2 image3 work merge
+echo   file  A   > image1/a
+echo   file  B   > image1/b
+echo   file  C   > image2/c       ->   tree
+
+mount -t overlay overlay -o lowerdir=image2:image1,upperdir=container,workdir=work merge
+workdir ->임시파일들이 저장되는 곳.
+
+cat merge/a
+cat merge/b
+
+-docker 대상 명령어(ls, ps -a)
+대상: image, volume , container, network 등등..
+docker image(파일) ls
+docker container(프로세스) ps -a
+
+-컨테이너 이미지 이름
+1.레지스트리(index.docker)
+2.저장소()
+3.이미지이름 및 Tag(centos:7.2)
+
+-run명령어는 create + start를 동시에 가능하게함.
+-ctrl + p + q는 컨테이너 빠져나옴.
+
+
+-docker  container   run    -it  --name  mycon3  centos    /bin/date
+-docker  container   run    -it  --name  myping   centos   /bin/ping   localhost
+=>실제 명령어 수행(PID 1)이 끝나면 컨테이너 종료함.
+
+
+-docker  container   run   --name  myping2   centos   /bin/ping   localhost
+-docker  container   run    -d  --name  myping3   centos   /bin/ping   localhost
+=>-d옵션은 백그라운드로 수행하게 하는 옵션
+
+-docker   container   logs   myping3
+=>해당 컨테이너의 PID 1번의 메시지를 보여주는 옵션이 logs
+
