@@ -53,6 +53,7 @@ docker container(프로세스) ps -a
 
 -docker container run -it --name mycon4 --workdir=/dockertest -e Myname=xadmkmw centos
 -docker container ps -aq =>현재 container ID에 대해 전부 뿌려줌.
+-docker container rm -f $(docker container ps -aq) 하면 전체 container삭제됨.
 
 ##echo $?
 cal (정상실행) -> $? -> 0 ==> 이전의 명령어가 정상 실행됨.
@@ -111,5 +112,6 @@ docker   container   run   -it  -v  /tmp/writedir/:/con_dir   -v  /tmp/readonly/
 
 
 
-
+##
+docker run --memory 50m --rm -it takytaky/stress stress --vm 1 --vm-bytes 60m --timeout 30s
 

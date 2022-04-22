@@ -1,0 +1,50 @@
+##같은 tar파일에 대한 save와 export차이
+-save명령어는 이미지 레이어를 저장
+-export로 tar파일을 만들면 컨테이너에 파일들이 tar파일로 저장
+
+##DockerFile
+-docker pull alpine
+=>alpine은 최소한의 설정만 갖고있는 이미지 파일. 사이즈가 작음
+
+-서브 디렉터리를 만들고 DockerFile 생성. -f 파일이름 형태로 build
+-Dockerfile안의 특수문자는 순차적인 명령의 실행임. (실행 or 성공에 상관없이)
+-date; cal; cp; hostname
+-$$연산자는 앞의 명령이 성공해야만 뒤 명령이 실행
+
+-RUN echo "Shell: HOME Dir -->  $HOME "
+=>쉘 방식
+-RUN ["echo", "EXEC: HOme dir --> $HOME" ]
+-RUN ["/bin/bash" , "-c", "echo EXEC: HOME dir : $HOME" ]
+=>exec 방식
+
+
+CMD ["nginx", "-g", "daemon off;"]
+=>exec방식으로 이 자체가 1번 프로세스. 만약 쉘로 실행하면 쉘이 1번이라 쉘이 죽으면 컨테이너가 죽음.
+
+
+CONTAINER ID   IMAGE     COMMAND                  CREATED          STATUS                    PORTS
+            NAMES
+f4720071d33b   health    "nginx -g 'daemon of…"   48 seconds ago   Up 47 seconds (healthy)   0.0.0.0:80->80/tcp, :::80->80/tcp   web1
+=>healthy라고 되어있으면 정상적으로 동작하고 있음을 나타냄.
+=>특정 파일 삭제 후 바로 unhealthy로 나타나지않음. 인터벌이 있기때문
+
+- \는 특정 내용에 대해 한줄로 처리하겠다..용량 최적화를 위한..? 근데 env는 실제 사이즈 차이가 많이 나지 않아서 하나하나 lowerLayer에 쌓아도 괜찮다.
+
+
+
+
+FROM centos:7
+RUN ["useradd" , "sysadmin"]
+RUN ["whoami"] =>이때는 root
+USER sysadmin  =>su 와 같음.
+RUN ["whoami"] =>이때는 sysadmin
+
+
+##docker image history [imagename]
+-image가 어떻게 만들어졌는지 확인 가능.
+
+##ADD vs copy
+-ADD명령어는 로컬, 원격에 있는 파일을 이미지로 복사할 수 있다.
+-copY명령어는 로컬 파일만 이미지로 복사가 가능함.
+-결국 ADD가 더 유용.
+
