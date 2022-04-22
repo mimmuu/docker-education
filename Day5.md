@@ -155,3 +155,5 @@ NETWORK ID     NAME                        DRIVER    SCOPE
 0cffr3egijx4   ingress                     overlay   swarm
 634bd1458c6b   none                        null      local
 d44a678f195e   wordpress_compose_default   bridge    local
+
+ss
